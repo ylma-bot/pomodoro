@@ -33,6 +33,7 @@ const timerDisplay = document.getElementById("timer");
 const startBtn = document.getElementById("startBtn");
 const pauseBtn = document.getElementById("pauseBtn");
 const resetBtn = document.getElementById("resetBtn");
+const shortBtn = document.getElementById("shortBtn");
 const sessionsDisplay = document.getElementById("sessions");
 
 
@@ -327,6 +328,11 @@ startBtn.addEventListener("click", startTimer);
 pauseBtn.addEventListener("click", pauseTimer);
 
 resetBtn.addEventListener("click", resetTimer);
+
+shortBtn.addEventListener("click", () => {
+  setMode("short");
+  startTimer();
+});
 
 
 /* 🚀 AFFICHAGE INITIAL */
