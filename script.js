@@ -110,10 +110,10 @@ function updateButtons() {
       startBtn.textContent = "Ⅱ Pause";
     } 
     else if (currentTime < workDuration) {
-      startBtn.textContent = "▶ Reprendre";
+      startBtn.textContent = "▶";
     } 
     else {
-      startBtn.textContent = "▶ Démarrer";
+      startBtn.textContent = "▶ Start";
     }
 
     shortBtn.textContent = "☕︎ Pause";
@@ -127,13 +127,13 @@ function updateButtons() {
       shortBtn.textContent = "Ⅱ";
     } 
     else if (currentTime < shortDuration) {
-      shortBtn.textContent = "▶ Reprendre";
+      shortBtn.textContent = "▶";
     } 
     else {
       shortBtn.textContent = "☕︎ Pause";
     }
 
-    startBtn.textContent = "Démarrer";
+    startBtn.textContent = "Start";
   }
 }
 
@@ -340,7 +340,7 @@ shortBtn.addEventListener("click", function () {
 
       mettreMusiqueEnPause();
 
-      shortBtn.textContent = "▶ Reprendre";
+      shortBtn.textContent = "▶";
 
     }
 
