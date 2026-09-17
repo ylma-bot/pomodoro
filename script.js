@@ -1,444 +1,291 @@
-```javascript
-/* 🎵 MUSIQUES */
-
+// 🎵 MUSIQUES
 const audioPlayer = document.getElementById("audioPlayer");
 
 const musiquesTravail = [
-  "travail.mp3",
-  "travail2.mp3",
-  "travail3.mp3"
+  "https://ylma-bot.github.io/pomodoro/travail.mp3",
+  "https://ylma-bot.github.io/pomodoro/travail2.mp3",
+  "https://ylma-bot.github.io/pomodoro/travail3.mp3"
 ];
 
-const musiquePause = "pause.mp3";
+const musiquePause =
+  "https://ylma-bot.github.io/pomodoro/pause.mp3";
 
 let musiqueTravailIndex = 0;
 
 
-/* ⏱️ DURÉES */
-
+// ⏱️ DURÉES
 let workDuration = 50 * 60;
 let shortDuration = 10 * 60;
+let longDuration = 20 * 60;
 
 let currentTime = workDuration;
 let currentMode = "work";
-
 let timerInterval = null;
 let isRunning = false;
-
 let sessionsCompleted = 0;
 
 
-/* 🎀 ÉLÉMENTS HTML */
-
+// 🎀 ÉLÉMENTS HTML
 const timerDisplay = document.getElementById("timer");
-
 const startBtn = document.getElementById("startBtn");
-const shortBtn = document.getElementById("shortBtn");
 const resetBtn = document.getElementById("resetBtn");
-
+const workBtn = document.getElementById("workBtn");
+const shortBtn = document.getElementById("shortBtn");
+const longBtn = document.getElementById("longBtn");
 const sessionsDisplay = document.getElementById("sessions");
+const applyBtn = document.getElementById("applyBtn");
 
 
-/* 🎵 MUSIQUE DE TRAVAIL */
-
+// 🎵 LANCER LA MUSIQUE DE TRAVAIL
 function lancerMusiqueTravail() {
-
   audioPlayer.loop = false;
-
-  audioPlayer.src =
-    musiquesTravail[musiqueTravailIndex];
-
+  audioPlayer.src = musiquesTravail[musiqueTravailIndex];
   audioPlayer.currentTime = 0;
 
   audioPlayer.play().catch(() => {});
-
 }
 
 
-/* 🌸 MUSIQUE DE PAUSE */
-
+// 🌸 LANCER LA MUSIQUE DE PAUSE
 function lancerMusiquePause() {
-
   audioPlayer.loop = true;
-
   audioPlayer.src = musiquePause;
-
   audioPlayer.currentTime = 0;
 
   audioPlayer.play().catch(() => {});
-
 }
 
 
-/* ⏸️ PAUSE MUSIQUE */
-
+// ⏸️ METTRE LA MUSIQUE EN PAUSE
 function mettreMusiqueEnPause() {
-
   audioPlayer.pause();
-
 }
 
 
-/* 🛑 ARRÊTER MUSIQUE */
-
+// 🛑 ARRÊTER LA MUSIQUE
 function arreterMusique() {
-
   audioPlayer.pause();
-
   audioPlayer.currentTime = 0;
-
 }
 
 
-/* 🎵 MUSIQUE SUIVANTE */
-
+// 🎵 PASSER AUTOMATIQUEMENT À LA MUSIQUE SUIVANTE
 audioPlayer.addEventListener("ended", () => {
 
+  // Pendant le travail : passer à la musique suivante
   if (currentMode === "work") {
 
     musiqueTravailIndex++;
 
+    // Après travail3 → retour à travail
     if (musiqueTravailIndex >= musiquesTravail.length) {
-
       musiqueTravailIndex = 0;
-
     }
 
-    audioPlayer.src =
-      musiquesTravail[musiqueTravailIndex];
-
+    audioPlayer.src = musiquesTravail[musiqueTravailIndex];
     audioPlayer.currentTime = 0;
 
     if (isRunning) {
-
       audioPlayer.play().catch(() => {});
-
     }
-
   }
 
 });
 
 
-/* ⏱️ AFFICHER LE TEMPS */
-
+// ⏱️ AFFICHER LE TEMPS
 function updateDisplay() {
-
   const minutes = Math.floor(currentTime / 60);
-
   const seconds = currentTime % 60;
 
   timerDisplay.textContent =
-    String(minutes).padStart(2, "0") +
-    ":" +
+    String(minutes).padStart(2, "0") + ":" +
     String(seconds).padStart(2, "0");
-
 }
 
 
-/* 🎀 METTRE À JOUR LES BOUTONS */
+// 🛑 ARRÊTER LE TIMER
+function stopTimer() {
+  clearInterval(timerInterval);
+  timerInterval = null;
+  isRunning = false;
 
-function updateButtons() {
+  startBtn.textContent = "▶ Démarrer";
 
-  if (currentMode === "work") {
-
-    if (isRunning) {
-
-      startBtn.textContent = "❚❚ Pause";
-
-    } else {
-
-      startBtn.textContent = "▶ Démarrer 50 min";
-
-    }
-
-    shortBtn.textContent = "☕ Pause 10 min";
-
-  }
-
-
-  else if (currentMode === "short") {
-
-    startBtn.textContent = "▶ Démarrer 50 min";
-
-    if (isRunning) {
-
-      shortBtn.textContent = "❚❚ Pause 10 min";
-
-    } else {
-
-      shortBtn.textContent = "▶ Reprendre pause";
-
-    }
-
-  }
-
+  mettreMusiqueEnPause();
 }
 
 
-/* ▶️ DÉMARRER / PAUSE / REPRENDRE */
+// ▶️ DÉMARRER / PAUSE
+function startTimer() {
 
-function toggleTimer() {
-
-  /* Si le timer fonctionne → PAUSE */
-
+  // Si le timer fonctionne déjà → pause
   if (isRunning) {
-
-    clearInterval(timerInterval);
-
-    timerInterval = null;
-
-    isRunning = false;
-
-    mettreMusiqueEnPause();
-
-    updateButtons();
-
+    stopTimer();
+    startBtn.textContent = "▶ Reprendre";
     return;
-
   }
-
-
-  /* Sinon → DÉMARRER ou REPRENDRE */
 
   isRunning = true;
+  startBtn.textContent = "Ⅱ Pause";
 
-  updateButtons();
+  // 🎵 Lancer la musique correspondant au mode
+  if (audioPlayer.src === "" || audioPlayer.src === window.location.href) {
 
-
-  /* 🎵 Lancer ou reprendre la musique */
-
-  if (currentMode === "work") {
-
-    if (
-      !audioPlayer.src ||
-      audioPlayer.src === window.location.href
-    ) {
-
+    if (currentMode === "work") {
       lancerMusiqueTravail();
-
     } else {
-
-      audioPlayer.play().catch(() => {});
-
-    }
-
-  }
-
-  else {
-
-    if (
-      !audioPlayer.src ||
-      audioPlayer.src === window.location.href
-    ) {
-
       lancerMusiquePause();
-
-    } else {
-
-      audioPlayer.play().catch(() => {});
-
     }
 
+  } else {
+    audioPlayer.play().catch(() => {});
   }
 
 
-  /* ⏱️ LANCER LE COMPTEUR */
-
+  // ⏱️ Lancer le compte à rebours
   timerInterval = setInterval(() => {
 
     currentTime--;
-
     updateDisplay();
 
-
-    /* ⏰ FIN DU MINUTEUR */
-
+    // Fin du temps
     if (currentTime <= 0) {
 
-      clearInterval(timerInterval);
-
-      timerInterval = null;
-
-      isRunning = false;
-
-      mettreMusiqueEnPause();
-
-
-      /* 🌸 FIN DU TRAVAIL */
+      stopTimer();
 
       if (currentMode === "work") {
 
         sessionsCompleted++;
+        sessionsDisplay.textContent = sessionsCompleted;
 
-        sessionsDisplay.textContent =
-          "Sessions terminées : " +
-          sessionsCompleted;
-
-        alert(
-          "Bravo ! Temps de travail terminé 🌸"
-        );
+        alert("Bravo ! Temps de travail terminé 🌸");
 
         setMode("short");
 
-        /* La pause démarre automatiquement */
+      } else {
 
-        toggleTimer();
-
-      }
-
-
-      /* ☕ FIN DE LA PAUSE */
-
-      else {
-
-        alert(
-          "Pause terminée ! On reprend doucement ✨"
-        );
+        alert("Pause terminée ! On reprend doucement ✨");
 
         setMode("work");
-
-        /* Le travail redémarre automatiquement */
-
-        toggleTimer();
 
       }
 
     }
 
   }, 1000);
-
 }
 
 
-/* 🔄 CHANGER DE MODE */
-
+// 🔄 CHANGER DE MODE
 function setMode(mode) {
 
-  clearInterval(timerInterval);
-
-  timerInterval = null;
-
-  isRunning = false;
-
-  mettreMusiqueEnPause();
+  stopTimer();
 
   currentMode = mode;
-
 
   if (mode === "work") {
 
     currentTime = workDuration;
 
+    // On recommence la playlist au premier morceau
     musiqueTravailIndex = 0;
 
-    audioPlayer.src =
-      musiquesTravail[musiqueTravailIndex];
+    audioPlayer.src = musiquesTravail[musiqueTravailIndex];
 
-  }
-
-
-  else if (mode === "short") {
+  } else if (mode === "short") {
 
     currentTime = shortDuration;
 
     audioPlayer.src = musiquePause;
 
-    audioPlayer.loop = true;
+  } else if (mode === "long") {
+
+    currentTime = longDuration;
+
+    audioPlayer.src = musiquePause;
 
   }
 
-
   updateDisplay();
-
-  updateButtons();
-
 }
 
 
-/* 🔄 RÉINITIALISER */
-
+// 🔄 RESET
 function resetTimer() {
 
-  clearInterval(timerInterval);
+  stopTimer();
 
-  timerInterval = null;
+  if (currentMode === "work") {
+    currentTime = workDuration;
+    musiqueTravailIndex = 0;
+  }
 
-  isRunning = false;
+  else if (currentMode === "short") {
+    currentTime = shortDuration;
+  }
 
-  mettreMusiqueEnPause();
-
-  currentMode = "work";
-
-  currentTime = workDuration;
-
-  musiqueTravailIndex = 0;
-
-  audioPlayer.src =
-    musiquesTravail[musiqueTravailIndex];
+  else if (currentMode === "long") {
+    currentTime = longDuration;
+  }
 
   updateDisplay();
-
-  updateButtons();
 
 }
 
 
-/* 🎀 BOUTON 50 MIN */
+// 🎀 BOUTONS
+startBtn.addEventListener("click", startTimer);
 
-startBtn.addEventListener("click", () => {
+resetBtn.addEventListener("click", resetTimer);
 
-  /*
-    Si on est en pause de 10 min,
-    cliquer sur Démarrer 50 min
-    recommence un nouveau Pomodoro.
-  */
 
-  if (currentMode !== "work") {
-
-    setMode("work");
-
-  }
-
-  toggleTimer();
-
+workBtn.addEventListener("click", () => {
+  setMode("work");
 });
 
-
-/* ☕ BOUTON PAUSE 10 MIN */
 
 shortBtn.addEventListener("click", () => {
+  setMode("short");
+});
 
-  /*
-    Si on est actuellement en travail,
-    on démarre une nouvelle pause de 10 min.
-  */
 
-  if (currentMode !== "short") {
+longBtn.addEventListener("click", () => {
+  setMode("long");
+});
 
-    setMode("short");
 
-    toggleTimer();
+// ⚙️ MODIFICATION DES DURÉES
+applyBtn.addEventListener("click", () => {
 
-  }
+  const workInput =
+    Number(document.getElementById("workTime").value);
 
-  /*
-    Si on est déjà dans la pause,
-    le bouton sert à PAUSE / REPRENDRE.
-  */
+  const shortInput =
+    Number(document.getElementById("shortTime").value);
 
-  else {
+  const longInput =
+    Number(document.getElementById("longTime").value);
 
-    toggleTimer();
+
+  if (workInput > 0 && shortInput > 0 && longInput > 0) {
+
+    workDuration = workInput * 60;
+    shortDuration = shortInput * 60;
+    longDuration = longInput * 60;
+
+    setMode(currentMode);
+
+    alert("Les durées ont été mises à jour 🌷");
+
+  } else {
+
+    alert("Entre des durées valides.");
 
   }
 
 });
 
 
-/* 🚀 AFFICHAGE INITIAL */
-
+// 🚀 AFFICHAGE INITIAL
 updateDisplay();
-
-updateButtons();
-```
