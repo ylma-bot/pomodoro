@@ -113,10 +113,10 @@ function updateButtons() {
       startBtn.textContent = "▶ Reprendre";
     } 
     else {
-      startBtn.textContent = "▶ Démarrer 50 min";
+      startBtn.textContent = "▶ Démarrer";
     }
 
-    shortBtn.textContent = "Pause 10 min";
+    shortBtn.textContent = "☕︎ Pause";
   }
 
 
@@ -124,16 +124,16 @@ function updateButtons() {
   if (currentMode === "short") {
 
     if (isRunning) {
-      shortBtn.textContent = "Ⅱ Pause 10 min";
+      shortBtn.textContent = "Ⅱ";
     } 
     else if (currentTime < shortDuration) {
-      shortBtn.textContent = "▶ Reprendre 10 min";
+      shortBtn.textContent = "▶ Reprendre";
     } 
     else {
-      shortBtn.textContent = "☕ Pause 10 min";
+      shortBtn.textContent = "☕︎ Pause";
     }
 
-    startBtn.textContent = "Démarrer 50 min";
+    startBtn.textContent = "Démarrer";
   }
 }
 
@@ -340,7 +340,7 @@ shortBtn.addEventListener("click", function () {
 
       mettreMusiqueEnPause();
 
-      shortBtn.textContent = "▶ Reprendre 10 min";
+      shortBtn.textContent = "▶ Reprendre";
 
     }
 
@@ -349,7 +349,7 @@ shortBtn.addEventListener("click", function () {
 
       isRunning = true;
 
-      shortBtn.textContent = "Ⅱ Pause 10 min";
+      shortBtn.textContent = "Ⅱ";
 
       audioPlayer.play().catch(() => {});
 
@@ -385,7 +385,7 @@ shortBtn.addEventListener("click", function () {
   // Puis démarrer immédiatement
   isRunning = true;
 
-  shortBtn.textContent = "Ⅱ Pause 10 min";
+  shortBtn.textContent = "Ⅱ";
 
   lancerMusiquePause();
 
