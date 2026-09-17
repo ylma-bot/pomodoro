@@ -1,3 +1,4 @@
+import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap');
 
 * {
   box-sizing: border-box;
@@ -10,6 +11,7 @@ body {
   font-family: "Times New Roman", serif;
   font-style: normal;
   color: #D889AA;
+  
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
@@ -31,7 +33,7 @@ h1 {
   margin-top: 0;
   margin-bottom: 0px;
   color: #C76591;
-  font-family: "Times New Roman", serif;
+  font-family: "times new roman", sans-serif;
   font-size: 29px;
   font-weight: 800;
   font-style: normal;
@@ -39,17 +41,17 @@ h1 {
   letter-spacing: 2px;
 }
 
-/* Sous-titre */
+/* Sous-titres */
 h2 {
   color: #84B569;
   font-family: "Times New Roman", serif;
   font-size: 22px;
   font-weight: normal;
   font-style: italic;
-  margin-top: 10px;
 }
 
 /* Boutons */
+.mode-buttons,
 .controls {
   display: flex;
   justify-content: center;
@@ -102,21 +104,34 @@ p {
   font-weight: normal;
 }
 
-/* Responsive */
-@media (max-width: 480px) {
-  .pomodoro {
-    padding: 25px 15px;
-  }
+/* Paramètres */
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 2px dashed #F2B6CE;
+  font-family: "Times New Roman", serif;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+}
 
-  h1 {
-    font-size: 25px;
-  }
+input {
+  width: 55px;
+  padding: 6px;
+  border: 2px solid #F2B6CE;
+  border-radius: 10px;
+  background-color: #FFF7FB;
+  color: #A9577C;
+  text-align: center;
+  font-family: "Times New Roman", serif;
+  font-size: 15px;
+  font-weight: normal;
+  font-style: normal;
+}
 
-  h2 {
-    font-size: 19px;
-  }
-
-  #timer {
-    font-size: 60px;
-  }
+#applyBtn {
+  margin-top: 5px;
 }
