@@ -326,27 +326,90 @@ startBtn.addEventListener("click", () => {
 
 
 // ☕ BOUTON PAUSE 10 MIN
-shortBtn.addEventListener("click", () => {
+shortBtn.addEventListener("click", function () {
 
-  // Si on est déjà dans la pause 10 min :
-  // démarrer / pause / reprendre
+  // Si on est déjà en pause 10 min
   if (currentMode === "short") {
 
-    startTimer();
+    // Si le timer tourne → PAUSE
+    if (isRunning) {
 
-  } 
-  else {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      isRunning = false;
 
-    // On passe aux 10 minutes
-    setShortMode();
+      mettreMusiqueEnPause();
 
-    // Puis on démarre immédiatement
-    startTimer();
+      shortBtn.textContent = "▶ Reprendre 10 min";
 
+    }
+
+    // Si le timer est arrêté → REPRENDRE
+    else {
+
+      isRunning = true;
+
+      shortBtn.textContent = "Ⅱ Pause 10 min";
+
+      audioPlayer.play().catch(() => {});
+
+      timerInterval = setInterval(() => {
+
+        currentTime--;
+        updateDisplay();
+
+        if (currentTime <= 0) {
+
+          clearInterval(timerInterval);
+          timerInterval = null;
+          isRunning = false;
+
+          mettreMusiqueEnPause();
+
+          alert("Pause terminée ! On reprend doucement ✨");
+
+          setWorkMode();
+        }
+
+      }, 1000);
+    }
+
+    return;
   }
 
-});
 
+  // Première fois qu'on clique :
+  // passer à 10 minutes
+  setShortMode();
+
+  // Puis démarrer immédiatement
+  isRunning = true;
+
+  shortBtn.textContent = "Ⅱ Pause 10 min";
+
+  lancerMusiquePause();
+
+  timerInterval = setInterval(() => {
+
+    currentTime--;
+    updateDisplay();
+
+    if (currentTime <= 0) {
+
+      clearInterval(timerInterval);
+      timerInterval = null;
+      isRunning = false;
+
+      mettreMusiqueEnPause();
+
+      alert("Pause terminée ! On reprend doucement ✨");
+
+      setWorkMode();
+    }
+
+  }, 1000);
+
+});
 
 // 🔄 RESET
 resetBtn.addEventListener("click", () => {
