@@ -1,0 +1,122 @@
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 20px;
+  background-color: #D6F0C7;
+  font-family: "Times New Roman", serif;
+  font-style: normal;
+  color: #D889AA;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.pomodoro {
+  max-width: 420px;
+  margin: 30px auto;
+  padding: 30px 22px;
+  text-align: center;
+  background-color: #F0FFE8;
+  border: 3px solid #F2B6CE;
+  border-radius: 28px;
+  box-shadow: 0 8px 20px rgba(190, 150, 170, 0.15);
+}
+
+/* Titre principal */
+h1 {
+  margin-top: 0;
+  margin-bottom: 0px;
+  color: #C76591;
+  font-family: "Times New Roman", serif;
+  font-size: 29px;
+  font-weight: 800;
+  font-style: normal;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* Sous-titre */
+h2 {
+  color: #84B569;
+  font-family: "Times New Roman", serif;
+  font-size: 22px;
+  font-weight: normal;
+  font-style: italic;
+  margin-top: 10px;
+}
+
+/* Boutons */
+.controls {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 1px 0;
+}
+
+button {
+  padding: 10px 14px;
+  border: 2px solid #E9A1BE;
+  border-radius: 18px;
+  background-color: #F0D8E0;
+  color: #AC82B8;
+  font-family: "Times New Roman", serif;
+  font-size: 15px;
+  font-weight: normal;
+  font-style: normal;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+button:hover {
+  background-color: #F3ABC7;
+  transform: translateY(-2px);
+}
+
+/* Minuteur */
+#timer {
+  margin: 22px 0;
+  color: #E0A9C2;
+  font-family: "Times New Roman", serif;
+  font-size: 70px;
+  font-weight: normal;
+  font-style: normal;
+  letter-spacing: 2px;
+}
+
+/* Texte général */
+p {
+  font-family: "Times New Roman", serif;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+}
+
+#sessions {
+  color: #B84F7D;
+  font-family: "Times New Roman", serif;
+  font-weight: normal;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .pomodoro {
+    padding: 25px 15px;
+  }
+
+  h1 {
+    font-size: 25px;
+  }
+
+  h2 {
+    font-size: 19px;
+  }
+
+  #timer {
+    font-size: 60px;
+  }
+}
