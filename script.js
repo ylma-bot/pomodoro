@@ -95,6 +95,7 @@ audioPlayer.addEventListener("ended", () => {
 
 // ⏱️ AFFICHER LE TEMPS
 function updateDisplay() {
+
   const minutes = Math.floor(currentTime / 60);
   const seconds = currentTime % 60;
 
@@ -104,33 +105,87 @@ function updateDisplay() {
 }
 
 
-// 🛑 ARRÊTER LE TIMER
-function stopTimer() {
-  clearInterval(timerInterval);
-  timerInterval = null;
-  isRunning = false;
+// 🎀 METTRE À JOUR LE TEXTE DES BOUTONS
+function updateButtons() {
 
-  startBtn.textContent = "▶ Démarrer";
+  if (currentMode === "work") {
 
-  mettreMusiqueEnPause();
+    if (isRunning) {
+      startBtn.textContent = "Ⅱ Pause";
+    } else if (currentTime < workDuration) {
+      startBtn.textContent = "▶ Reprendre";
+    } else {
+      startBtn.textContent = "▶ Démarrer";
+    }
+
+  } else if (currentMode === "short") {
+
+    if (isRunning) {
+      shortBtn.textContent = "Ⅱ Pause 10 min";
+    } else if (currentTime < shortDuration) {
+      shortBtn.textContent = "▶ Reprendre 10 min";
+    } else {
+      shortBtn.textContent = "☕ Pause 10 min";
+    }
+
+  } else if (currentMode === "long") {
+
+    if (isRunning) {
+      longBtn.textContent = "Ⅱ Pause 20 min";
+    } else if (currentTime < longDuration) {
+      longBtn.textContent = "▶ Reprendre 20 min";
+    } else {
+      longBtn.textContent = "Pause 20 min";
+    }
+
+  }
 }
 
 
-// ▶️ DÉMARRER / PAUSE
+// 🛑 ARRÊTER LE TIMER
+function stopTimer() {
+
+  clearInterval(timerInterval);
+
+  timerInterval = null;
+  isRunning = false;
+
+  mettreMusiqueEnPause();
+
+  updateButtons();
+}
+
+
+// ▶️ DÉMARRER / PAUSE / REPRENDRE
 function startTimer() {
 
-  // Si le timer fonctionne déjà → pause
+  // ⏸️ Si le timer fonctionne déjà → pause
   if (isRunning) {
-    stopTimer();
-    startBtn.textContent = "▶ Reprendre";
+
+    clearInterval(timerInterval);
+
+    timerInterval = null;
+    isRunning = false;
+
+    mettreMusiqueEnPause();
+
+    updateButtons();
+
     return;
   }
 
+
+  // ▶️ Sinon → démarrer ou reprendre
   isRunning = true;
-  startBtn.textContent = "Ⅱ Pause";
+
+  updateButtons();
+
 
   // 🎵 Lancer la musique correspondant au mode
-  if (audioPlayer.src === "" || audioPlayer.src === window.location.href) {
+  if (
+    audioPlayer.src === "" ||
+    audioPlayer.src === window.location.href
+  ) {
 
     if (currentMode === "work") {
       lancerMusiqueTravail();
@@ -139,7 +194,9 @@ function startTimer() {
     }
 
   } else {
+
     audioPlayer.play().catch(() => {});
+
   }
 
 
@@ -147,23 +204,37 @@ function startTimer() {
   timerInterval = setInterval(() => {
 
     currentTime--;
+
     updateDisplay();
 
-    // Fin du temps
+
+    // 🏁 FIN DU TEMPS
     if (currentTime <= 0) {
 
-      stopTimer();
+      clearInterval(timerInterval);
 
+      timerInterval = null;
+      isRunning = false;
+
+      mettreMusiqueEnPause();
+
+
+      // 🌸 FIN DU TRAVAIL
       if (currentMode === "work") {
 
         sessionsCompleted++;
-        sessionsDisplay.textContent = sessionsCompleted;
+
+        sessionsDisplay.textContent =
+          "Sessions terminées : " + sessionsCompleted;
 
         alert("Bravo ! Temps de travail terminé 🌸");
 
         setMode("short");
 
-      } else {
+      }
+
+      // ☕ FIN DE LA PAUSE
+      else {
 
         alert("Pause terminée ! On reprend doucement ✨");
 
@@ -174,6 +245,7 @@ function startTimer() {
     }
 
   }, 1000);
+
 }
 
 
@@ -184,22 +256,32 @@ function setMode(mode) {
 
   currentMode = mode;
 
+
+  // 💗 MODE TRAVAIL
   if (mode === "work") {
 
     currentTime = workDuration;
 
-    // On recommence la playlist au premier morceau
     musiqueTravailIndex = 0;
 
-    audioPlayer.src = musiquesTravail[musiqueTravailIndex];
+    audioPlayer.src =
+      musiquesTravail[musiqueTravailIndex];
 
-  } else if (mode === "short") {
+  }
+
+
+  // ☕ PAUSE 10 MIN
+  else if (mode === "short") {
 
     currentTime = shortDuration;
 
     audioPlayer.src = musiquePause;
 
-  } else if (mode === "long") {
+  }
+
+
+  // 🌸 PAUSE 20 MIN
+  else if (mode === "long") {
 
     currentTime = longDuration;
 
@@ -207,85 +289,162 @@ function setMode(mode) {
 
   }
 
+
   updateDisplay();
+  updateButtons();
 }
 
 
-// 🔄 RESET
+// 🔄 RÉINITIALISER
 function resetTimer() {
 
   stopTimer();
 
+
   if (currentMode === "work") {
+
     currentTime = workDuration;
+
     musiqueTravailIndex = 0;
+
+    audioPlayer.src =
+      musiquesTravail[musiqueTravailIndex];
+
   }
+
 
   else if (currentMode === "short") {
+
     currentTime = shortDuration;
+
+    audioPlayer.src = musiquePause;
+
   }
+
 
   else if (currentMode === "long") {
+
     currentTime = longDuration;
+
+    audioPlayer.src = musiquePause;
+
   }
 
+
   updateDisplay();
+  updateButtons();
 
 }
 
 
-// 🎀 BOUTONS
-startBtn.addEventListener("click", startTimer);
+// 🎀 BOUTON 50 MIN
+startBtn.addEventListener("click", () => {
 
+  // Si on est déjà en mode travail
+  if (currentMode === "work") {
+
+    startTimer();
+
+    return;
+  }
+
+
+  // Sinon, passer au travail
+  setMode("work");
+
+  startTimer();
+
+});
+
+
+// ☕ BOUTON PAUSE 10 MIN
+shortBtn.addEventListener("click", () => {
+
+  // Si on est déjà en pause 10 min
+  if (currentMode === "short") {
+
+    startTimer();
+
+    return;
+  }
+
+
+  // Sinon, passer à la pause 10 min
+  setMode("short");
+
+  startTimer();
+
+});
+
+
+// 🌸 BOUTON PAUSE 20 MIN
+if (longBtn) {
+
+  longBtn.addEventListener("click", () => {
+
+    // Si on est déjà en pause 20 min
+    if (currentMode === "long") {
+
+      startTimer();
+
+      return;
+    }
+
+
+    // Sinon, passer à la pause 20 min
+    setMode("long");
+
+    startTimer();
+
+  });
+
+}
+
+
+// 🔄 BOUTON RÉINITIALISER
 resetBtn.addEventListener("click", resetTimer);
 
 
-workBtn.addEventListener("click", () => {
-  setMode("work");
-});
-
-
-shortBtn.addEventListener("click", () => {
-  setMode("short");
-});
-
-
-longBtn.addEventListener("click", () => {
-  setMode("long");
-});
-
-
 // ⚙️ MODIFICATION DES DURÉES
-applyBtn.addEventListener("click", () => {
+if (applyBtn) {
 
-  const workInput =
-    Number(document.getElementById("workTime").value);
+  applyBtn.addEventListener("click", () => {
 
-  const shortInput =
-    Number(document.getElementById("shortTime").value);
+    const workInput =
+      Number(document.getElementById("workTime").value);
 
-  const longInput =
-    Number(document.getElementById("longTime").value);
+    const shortInput =
+      Number(document.getElementById("shortTime").value);
+
+    const longInput =
+      Number(document.getElementById("longTime").value);
 
 
-  if (workInput > 0 && shortInput > 0 && longInput > 0) {
+    if (
+      workInput > 0 &&
+      shortInput > 0 &&
+      longInput > 0
+    ) {
 
-    workDuration = workInput * 60;
-    shortDuration = shortInput * 60;
-    longDuration = longInput * 60;
+      workDuration = workInput * 60;
+      shortDuration = shortInput * 60;
+      longDuration = longInput * 60;
 
-    setMode(currentMode);
+      setMode(currentMode);
 
-    alert("Les durées ont été mises à jour 🌷");
+      alert("Les durées ont été mises à jour 🌷");
 
-  } else {
+    } else {
 
-    alert("Entre des durées valides.");
+      alert("Entre des durées valides.");
 
-  }
+    }
 
-});
+  });
+
+}
 
 
 // 🚀 AFFICHAGE INITIAL
 updateDisplay();
+updateButtons();
